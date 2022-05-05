@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "fabionevs-tcc",
+    "slug": "snack-097551cd-f9c1-4199-ae58-09d99db20e51",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "cupomapp",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "versionCode": 1,
+      "package": "com.fabionevs.snack097551cdf9c14199ae5809d99db20e51"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "description": "callstack/react-native-paper @ Nov 8, 2018"
+  }
+}
