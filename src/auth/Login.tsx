@@ -14,7 +14,6 @@ import Auth from '../../services/Auth';
 import { AsyncStorage } from 'react-native';
 import Logo from '../../assets/logo-256.png';
 
-const DEFAULT_IMAGE = Image.resolveAssetSource(Logo).uri;
 
 export default function Login({ navigation }) {
     const [url, setUrl] = useState(null);
@@ -44,11 +43,12 @@ export default function Login({ navigation }) {
             navigation.navigate('Home')
         }
     }
+    
 
     return (
         <>
             <View style={styles.container}>
-                <Image source={{ uri: DEFAULT_IMAGE }} />
+                <Image source={Logo} style={{ width: 128, height: 128 }}/>
                 <Text style={styles.text}>Esse é um aplicativo demonstrativo feito para o TCC Uniceub 01/2022</Text>
                 <Button icon="google" mode="contained" onPress={() => handleLogin()}>
                     Faça login com Google
