@@ -60,17 +60,17 @@ export default function ExampleList({ navigation }: Props) {
     const safeArea = useSafeArea();
     const [index, setIndex] = React.useState<number>(0);
     const [routes] = React.useState<RoutesState>([
+        {
+            key: 'favorites',
+            title: 'Meus Cupons',
+            icon: 'image-album',
+            color: '#6200ee',
+        },
         { key: 'sorteio', title: 'Sorteio', icon: 'tag-multiple-outline', color: '#6200ee' },
         {
             key: 'mapa',
             title: 'Buscar',
             icon: 'search-web',
-            color: '#6200ee',
-        },
-        {
-            key: 'favorites',
-            title: 'Meus Cupons',
-            icon: 'image-album',
             color: '#6200ee',
         },
     ]);
@@ -393,8 +393,8 @@ export default function ExampleList({ navigation }: Props) {
                 navigationState={{ index, routes }}
                 onIndexChange={index => setIndex(index)}
                 renderScene={BottomNavigation.SceneMap({
-                    sorteio: Sorteio,
                     favorites: ListaUserCupons,
+                    sorteio: Sorteio,
                     mapa: Mapa,
                 })}
                 sceneAnimationEnabled={false}

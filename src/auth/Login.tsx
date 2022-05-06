@@ -38,7 +38,6 @@ export default function Login({ navigation }) {
     const handleOpenURL = async (event)=> {
         console.log(event)
         const hasToken = event.url.includes('token')
-        console.log(hasToken)
         if(hasToken){
             const url = event.url.split('=')[1];
             await Auth.storeUser(url);
