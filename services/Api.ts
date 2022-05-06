@@ -17,12 +17,11 @@ apiService.interceptors.request.use(async config => {
         config.headers = {
             Accept: 'application/json',
             ContentType: 'application/json',
-            Authorization: `Bearer ${token.token}`,
+            Authorization: `Bearer ${token}`,
         };
     }
     return config;
 });
-
 
 
 export default apiService;

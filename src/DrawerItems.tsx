@@ -16,9 +16,7 @@ type Props = {
 };
 
 const DrawerItemsData = [
-    { label: 'Meus Cupons', icon: 'inbox', key: 0, route: 'Home' },
-    { label: 'Configurações', icon: 'star', key: 1, route: 'Home' },
-    { label: 'Descontos', icon: 'send', key: 2, route: 'Home' },
+    { label: 'Página Inicial', icon: 'inbox', key: 0, route: 'Home' },
     { label: 'Sair da Conta', icon: 'logout', key: 3, route: 'Login' },
 ];
 

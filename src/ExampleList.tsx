@@ -42,11 +42,12 @@ import {
     StyleSheet,
     Platform,
 } from 'react-native';
-import { BottomNavigation, Card, Paragraph, Title } from 'react-native-paper';
+import { BottomNavigation, Card, Paragraph, Title, Text, Dialog, Portal, Snackbar, Searchbar } from 'react-native-paper';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { Avatar } from 'react-native-paper';
 import Filiais from '../services/Filiais';
+import Cupons from '../services/Cupons';
 export const examples: Record<
     string,
     React.ComponentType<any> & { title: string }
@@ -118,13 +119,12 @@ export default function ExampleList({ navigation }: Props) {
     const safeArea = useSafeArea();
     const [index, setIndex] = React.useState<number>(0);
     const [routes] = React.useState<RoutesState>([
-        { key: 'sorteio', title: 'Sorteio', icon: 'image-album', color: '#6200ee' },
+        { key: 'sorteio', title: 'Sorteio', icon: 'tag-multiple-outline', color: '#6200ee' },
         {
             key: 'mapa',
-            title: 'Mapa',
-            icon: 'map',
+            title: 'Buscar',
+            icon: 'search-web',
             color: '#6200ee',
-            badge: true,
         },
         {
             key: 'favorites',
@@ -139,6 +139,7 @@ export default function ExampleList({ navigation }: Props) {
         const [location, setLocation] = useState(null);
         const [errorMsg, setErrorMsg] = useState(null);
         const [filiais, setFiliais] = useState([] as any);
+        const [categoria, setCategoria] = useState("");
 
         useEffect(() => {
             (async () => {
@@ -161,11 +162,17 @@ export default function ExampleList({ navigation }: Props) {
         }, [location]);
 
         const getFiliais = async () => {
-            await Filiais.getFiliais(location).then((response: any) => {
+            await Filiais.getFiliais(location, categoria).then((response: any) => {
                 setFiliais(response);
             })
         }
 
+        const handleCategoria = async (text) => {
+            setCategoria(text)
+            await Filiais.getFiliais(location, text).then((response: any) => {
+                setFiliais(response);
+            })
+        }
         return (
             <>
                 {location !== null &&
@@ -188,16 +195,47 @@ export default function ExampleList({ navigation }: Props) {
                                 </Marker>
                             )}
                         </MapView>
-                        <Card style={styles.floatingCard}>
-                            <Card.Content>
-                                <Title>Card title</Title>
-                                <Paragraph>Card content</Paragraph>
-                            </Card.Content>
-                        </Card>
+                        <Searchbar style={styles.floatingInput}
+                            placeholder="Digite a Categoria"
+                            onChangeText={(text: any) => {
+                                handleCategoria(text)
+                            }}
+                            value={categoria}
+                        />
                     </View>
                 }
             </>
         );
+    };
+
+    const ListaUserCupons = ({ route }: Route) => {
+        const [cupons, setCupons] = useState({} as any);
+        useEffect(() => {
+            getCupons()
+        }, []);
+
+        const getCupons = async () => {
+            await Cupons.userCupons().then((response: any) => {
+                setCupons(response);
+                console.log(response)
+            })
+        }
+
+        return (
+            <>
+                {cupons.length > 0 && cupons.map((cupom: any, i: any) =>
+                    <Card style={styles.card} key={i}>
+                        <Card.Content>
+                            <Title><Avatar.Image source={{ uri: cupom.promocao.filial.empresa.logo }} size={30} /> {cupom.promocao.nm_nome}</Title>
+                            <Paragraph><Text style={styles.cardText}>Estabelecimento:</Text> {cupom.promocao.nm_nome}</Paragraph>
+                            <Paragraph><Text style={styles.cardText}>Código do Cupom:</Text> {cupom.cd_cupom}</Paragraph>
+                            <Paragraph><Text style={styles.cardText}>Utilizado?</Text> {(cupom.st_consumido == true) ? "Sim" : "Não"}</Paragraph>
+                            <Paragraph><Text style={styles.cardText}>Endereço</Text> {cupom.promocao.filial.ds_endereco}</Paragraph>
+                        </Card.Content>
+                    </Card>
+                )}
+            </>
+        )
     };
 
     const Sorteio = ({ route }: Route) => {
@@ -205,8 +243,11 @@ export default function ExampleList({ navigation }: Props) {
         const [location, setLocation] = useState(null);
         const [errorMsg, setErrorMsg] = useState(null);
         const [filiais, setFiliais] = useState([] as any);
+        const [cupons, setCupons] = useState([] as any);
         const [selectedLocation, setSelectedLocation] = useState({} as any);
-
+        const [selectedBusiness, setSelectedBusiness] = useState({} as any);
+        const [userBlocked, setUserBlocked] = useState(false);
+        const [userSuccess, setUserSuccess] = useState(false);
         useEffect(() => {
             (async () => {
                 let { status } = await Location.requestForegroundPermissionsAsync();
@@ -228,14 +269,41 @@ export default function ExampleList({ navigation }: Props) {
             })
         }
 
+        const getCupons = async (filial) => {
+            await Cupons.getCupons(filial).then((response: any) => {
+                setCupons(response);
+            })
+        }
+
         const sorteio = async () => {
             let newLocation = rand(0, filiais.length - 1);
             setSelectedLocation(filiais[newLocation])
             await setLocation({ latitude: Number(filiais[newLocation].latitude), longitude: Number(filiais[newLocation].longitude) });
         }
 
+        const openBusiness = async () => {
+            await getCupons({ filial_id: selectedLocation.id });
+            setSelectedBusiness(selectedLocation);
+        }
+
         function rand(min, max) { // min and max included 
             return Math.floor(Math.random() * (max - min + 1) + min)
+        }
+
+        const pegar = async (cupom: any) => {
+            await Cupons.pegar({ promocao_id: cupom.id }).then((response: any) => {
+                if (response.error == true) {
+                    setUserBlocked(true)
+                    setTimeout(() => {
+                        setUserBlocked(false);
+                    }, 5000)
+                    return false;
+                }
+                setUserSuccess(true);
+                setTimeout(() => {
+                    setUserSuccess(false);
+                }, 5000)
+            })
         }
 
         return (
@@ -257,7 +325,7 @@ export default function ExampleList({ navigation }: Props) {
                                     key={i}
                                     coordinate={{ latitude: Number(filial.latitude), longitude: Number(filial.longitude) }}
                                 >
-                                    <Avatar.Image source={{ uri: filial.empresa.logo }} size={80} />
+                                    <Avatar.Image source={{ uri: filial.empresa.logo }} size={50} />
                                 </Marker>
                             )}
                         </MapView>
@@ -273,8 +341,8 @@ export default function ExampleList({ navigation }: Props) {
                                             <Avatar.Image source={{ uri: selectedLocation.empresa.logo }} size={30} />
                                             <Title>{selectedLocation.empresa.nm_nome}</Title>
                                         </View>
-                                        <Paragraph>Distância: {selectedLocation.km_away} Km</Paragraph>
-                                        <Paragraph>Categoria: {selectedLocation.categoria}</Paragraph>
+                                        <Paragraph><Text style={styles.cardText}>Categoria:</Text> {selectedLocation.nm_categoria}</Paragraph>
+                                        <Paragraph><Text style={styles.cardText}>Distância:</Text> {selectedLocation.km_away} Km</Paragraph>
                                     </>
                                 }
                                 <View style={{
@@ -285,13 +353,73 @@ export default function ExampleList({ navigation }: Props) {
                                     <Button icon="shuffle" style={{ marginTop: 10, width: '40%' }} mode="contained" onPress={() => { sorteio() }}>
                                         Sortear
                                     </Button>
-                                    <Button color='#8e05d4' disabled={!('id' in selectedLocation)} icon="thumb-up" style={{ marginTop: 10, width: '50%' }} mode="contained" onPress={() => { sorteio() }}>
-                                        Pegar
+                                    <Button color='#8e05d4' disabled={!('id' in selectedLocation)} icon="ticket-percent" style={{ marginTop: 10, width: '50%' }} mode="contained" onPress={() => { openBusiness() }}>
+                                        Cupons
                                     </Button>
                                 </View>
                             </Card.Content>
                         </Card>
                     </View>
+                }
+                {'id' in selectedBusiness &&
+                    <Portal>
+                        <Dialog visible={'id' in selectedBusiness} onDismiss={() => { }}>
+                            <Dialog.Title>
+                                <Avatar.Image source={{ uri: selectedBusiness.empresa.logo }} size={80} />
+                                {selectedBusiness.empresa.nm_nome}
+                            </Dialog.Title>
+                            <Dialog.ScrollArea>
+                                <ScrollView>
+                                    <Paragraph style={{ marginTop: 10 }}><Text style={styles.cardText}>Distância:</Text> {selectedBusiness.km_away} Km</Paragraph>
+                                    <Paragraph><Text style={styles.cardText}>Categoria:</Text> {selectedBusiness.nm_categoria}</Paragraph>
+                                    <Paragraph><Text style={styles.cardText}>Endereço:</Text> {selectedBusiness.ds_endereco}</Paragraph>
+                                    <List.Section>
+                                        <List.Subheader>Cupons</List.Subheader>
+                                        {cupons.length > 0 && cupons.map((cupom: any, i: any) =>
+                                            <List.Item
+                                                key={i}
+                                                title={cupom.nm_nome}
+                                                description={cupom.nr_porcentagem + "% de desconto"}
+                                                left={props => <Avatar.Image source={{ uri: selectedBusiness.empresa.logo }} size={20} style={{ marginTop: 10 }} />}
+                                                right={props => <Button style={{ marginTop: 10 }} mode="text" onPress={() => pegar(cupom)}>
+                                                    Pegar
+                                                </Button>}
+                                            />
+                                        )}
+                                    </List.Section>
+                                </ScrollView>
+                            </Dialog.ScrollArea>
+                            <Dialog.Actions>
+                                <Button onPress={() => setSelectedBusiness({})}>Fechar</Button>
+                            </Dialog.Actions>
+                        </Dialog>
+                        {userBlocked == true &&
+                            <Snackbar
+                                visible={true}
+                                onDismiss={() => { }}
+                                action={{
+                                    label: 'Undo',
+                                    onPress: () => {
+                                        // Do something
+                                    },
+                                }}>
+                                Você só pode ganhar 1 cupom por dia!
+                            </Snackbar>
+                        }
+                        {userSuccess == true &&
+                            <Snackbar
+                                visible={true}
+                                onDismiss={() => { }}
+                                action={{
+                                    label: 'Undo',
+                                    onPress: () => {
+                                        // Do something
+                                    },
+                                }}>
+                                Cupom adquirido com sucesso!
+                            </Snackbar>
+                        }
+                    </Portal>
                 }
             </>
         );
@@ -324,8 +452,9 @@ export default function ExampleList({ navigation }: Props) {
                 navigationState={{ index, routes }}
                 onIndexChange={index => setIndex(index)}
                 renderScene={BottomNavigation.SceneMap({
-                    mapa: Mapa,
                     sorteio: Sorteio,
+                    favorites: ListaUserCupons,
+                    mapa: Mapa,
                 })}
                 sceneAnimationEnabled={false}
             />
@@ -385,5 +514,17 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 35,
         width: Dimensions.get('window').width - 50,
+    },
+    floatingInput: {
+        alignSelf: 'center',
+        position: 'absolute',
+        top: 35,
+        width: Dimensions.get('window').width - 50,
+    },
+    cardText: {
+        fontWeight: 'bold'
+    },
+    card: {
+        margin: 20
     }
 });
