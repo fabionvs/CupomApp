@@ -4,7 +4,7 @@ import auth from "./Auth";
 
 const configValue: string = (process.env.REACT_APP_API_URL as string);
 const apiService = axios.create({
-    baseURL: "https://f682-2804-1b2-81-fe8f-9509-7383-a8c9-51a6.ngrok.io/api",
+    baseURL: "https://api.zenyv.com/api",
 });
 
 apiService.interceptors.request.use(async config => {
