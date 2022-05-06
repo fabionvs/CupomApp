@@ -25,8 +25,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "versionCode": 1,
-      "package": "com.fabionevs.snack097551cdf9c14199ae5809d99db20e51"
+      "versionCode": 1.1,
+      "package": "com.zenyv"
     },
     "web": {
       "favicon": "./assets/favicon.png"

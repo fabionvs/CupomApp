@@ -15,6 +15,7 @@ import App from './RootNavigator';
 import Login from './auth/Login';
 import DrawerItems from './DrawerItems';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import Auth from '../services/Auth';
 
 const PERSISTENCE_KEY = 'NAVIGATION_STATE';
 const PREFERENCES_KEY = 'APP_PREFERENCES';
