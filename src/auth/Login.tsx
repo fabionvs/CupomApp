@@ -18,7 +18,7 @@ import Logo from '../../assets/logo-256.png';
 export default function Login({ navigation }) {
     const [url, setUrl] = useState(null);
     useEffect(() => {
-        Linking.removeEventListener
+        Linking.removeAllListeners
     })
     useEffect(() => {
         Auth.logout()
@@ -35,15 +35,20 @@ export default function Login({ navigation }) {
             }
         );
     };
-    const handleOpenURL = (event) => {
+    const handleOpenURL = async (event)=> {
+        console.log(event)
         const hasToken = event.url.includes('token')
+        console.log(hasToken)
         if(hasToken){
             const url = event.url.split('=')[1];
-            Auth.storeUser(url);
-            navigation.navigate('Home')
+            await Auth.storeUser(url);
+            setTimeout(nav, 200);
         }
     }
     
+    const nav = () => {
+        navigation.navigate('Home')
+    }
 
     return (
         <>
