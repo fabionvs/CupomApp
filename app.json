@@ -2,7 +2,7 @@
   "expo": {
     "name": "fabionevs-tcc",
     "slug": "snack-097551cd-f9c1-4199-ae58-09d99db20e51",
-    "version": "4.2.0",
+    "version": "5.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "cupomapp",
@@ -25,7 +25,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "versionCode": 4,
+      "versionCode": 5,
       "package": "com.fabionevs.snack097551cdf9c14199ae5809d99db20e51",
       "config": {
           "googleMaps" :{
