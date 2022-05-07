@@ -26,7 +26,12 @@
         "backgroundColor": "#FFFFFF"
       },
       "versionCode": 4,
-      "package": "com.fabionevs.snack097551cdf9c14199ae5809d99db20e51"
+      "package": "com.fabionevs.snack097551cdf9c14199ae5809d99db20e51",
+      "config": {
+          "googleMaps" :{
+              "apiKey": "AIzaSyCn49u66dgO12HrOBOqD8uaag3nKbTJhsU"
+          }
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
