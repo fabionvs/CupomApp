@@ -1,7 +1,7 @@
 /* eslint-disable import/first */
 import api from "./Api";
 
-const getFiliais = (location, categoria) => {
+const getFiliais = (location, categoria = null) => {
     let data :any = {latitude: location.latitude, longitude: location.longitude};
     if(categoria !== ""){
         data.nm_categoria = categoria;

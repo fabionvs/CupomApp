@@ -36,10 +36,10 @@ export default function Login({ navigation }) {
         );
     };
     const handleOpenURL = async (event)=> {
-        console.log(event)
         const hasToken = event.url.includes('token')
         if(hasToken){
-            const url = event.url.split('=')[1];
+            const url = event.url.split('token=')[1];
+            console.log(url)
             await Auth.storeUser(url);
             setTimeout(nav, 200);
         }
@@ -54,7 +54,7 @@ export default function Login({ navigation }) {
             <View style={styles.container}>
                 <Image source={Logo} style={{ width: 128, height: 128 }}/>
                 <Text style={styles.text}>Esse é um aplicativo demonstrativo feito para o TCC Uniceub 01/2022</Text>
-                <Button icon="google" mode="contained" onPress={() => handleLogin()}>
+                <Button style={{padding: 10}} icon="google" mode="contained" onPress={() => handleLogin()}>
                     Faça login com Google
                 </Button>
             </View>
