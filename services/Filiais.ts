@@ -11,12 +11,24 @@ const getFiliais = (location, categoria = null) => {
             params: data
         })
         .then((response) => {
+            console.log(response);
+            return response.data;
+        });
+};
+
+const getCategorias = (categoria) => {
+    return api
+        .get("/list/categories", {
+            params: {nm_categoria : categoria}
+        })
+        .then((response) => {
+            console.log(response);
             return response.data;
         });
 };
 
 
-
 export default {
-    getFiliais
+    getFiliais,
+    getCategorias
 };

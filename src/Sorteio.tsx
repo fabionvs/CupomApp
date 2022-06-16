@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FlatList, Linking } from 'react-native';
+import { FlatList } from 'react-native';
 import { List, Divider, useTheme, Button } from 'react-native-paper';
 import { useSafeArea } from 'react-native-safe-area-context';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -18,7 +18,6 @@ import * as Location from 'expo-location';
 import { Avatar } from 'react-native-paper';
 import Filiais from '../services/Filiais';
 import Cupons from '../services/Cupons';
-import { useRoute } from '@react-navigation/native';
 export const examples: Record<
     string,
     React.ComponentType<any> & { title: string }
@@ -37,7 +36,6 @@ type RoutesState = Array<{
 }>;
 type Props = {
     navigation: StackNavigationProp<{ [key: string]: undefined }>;
-    title: any;
 };
 
 type Item = {
@@ -49,253 +47,10 @@ const data = Object.keys(examples).map(
     (id): Item => ({ id, data: examples[id] })
 );
 
-export default function ExampleList({ navigation, title }: Props) {
-    const route: any = useRoute();
+export default function Root({ navigation }: Props) {
 
-    const keyExtractor = (item: { id: string }) => item.id;
-    const { colors } = useTheme();
-    const safeArea = useSafeArea();
-    const [index, setIndex] = React.useState<number>(0);
-    const [routes] = React.useState<RoutesState>([
-        { key: 'sorteio', title: 'Sorteio', icon: 'tag-multiple-outline', color: '#6200ee' },
-        {
-            key: 'favorites',
-            title: 'Meus Cupons',
-            icon: 'image-album',
-            color: '#6200ee',
-        },
-        {
-            key: 'mapa',
-            title: 'Buscar',
-            icon: 'search-web',
-            color: '#6200ee',
-        },
-        {
-            key: 'estabelecimentos',
-            title: 'Estabelecimentos',
-            icon: 'store',
-            color: '#6200ee',
-        },
-    ]);
-    type Route = { route: { key: string } };
-    React.useEffect(() => {
-        let isApiSubscribed = true;
-        if (route.params?.id <= 3) {
-            setIndex(route.params.id)
-        }
-        return () => {
-            // cancel the subscription
-            isApiSubscribed = false;
-        };
-    }, [route.params?.id]);
+    const Sorteio = () => {
 
-    const Mapa = ({ route }: Route) => {
-
-        const [location, setLocation] = useState(null);
-        const [errorMsg, setErrorMsg] = useState(null);
-        const [filiais, setFiliais] = useState([] as any);
-        const [categoria, setCategoria] = useState("");
-        const [inputCard, setInputCard] = useState([] as any);
-        const [inputCardActive, setInputCardActive] = useState(false);
-
-        useEffect(() => {
-            (async () => {
-                let { status } = await Location.requestForegroundPermissionsAsync();
-                if (status !== 'granted') {
-                    alert('Permission to access location was denied');
-                    return;
-                }
-
-                let location = await Location.getCurrentPositionAsync({});
-                let geo: any = { latitude: location.coords.latitude, longitude: location.coords.longitude };
-                setLocation(geo);
-            })();
-        }, []);
-
-        useEffect(() => {
-            if (location !== null) {
-                getFiliais()
-            }
-        }, [location]);
-
-        const getFiliais = async () => {
-            await Filiais.getFiliais(location, categoria).then((response: any) => {
-                setFiliais(response);
-            })
-        }
-
-        const handleCategoria = async (text) => {
-            setCategoria(text)
-            setInputCardActive(false)
-            await Filiais.getFiliais(location, text).then((response: any) => {
-                setFiliais(response);
-            })
-        }
-
-        const search = async (text) => {
-            setCategoria(text)
-            setInputCardActive(true)
-            await Filiais.getCategorias(text).then((response: any) => {
-                setInputCard(response);
-            })
-        }
-
-        return (
-            <>
-                {location !== null &&
-                    <View style={styles.container}>
-                        <MapView style={styles.map}
-                            provider={PROVIDER_GOOGLE}
-                            mapType={"terrain"}
-                            initialRegion={{
-                                latitude: location.latitude,
-                                longitude: location.longitude,
-                                latitudeDelta: 0.0922,
-                                longitudeDelta: 0.0421,
-                            }}>
-                            {filiais.length > 0 && filiais.map((filial: any, i: any) =>
-                                <Marker
-                                    key={i}
-                                    coordinate={{ latitude: Number(filial.latitude), longitude: Number(filial.longitude) }}
-                                >
-                                    <Avatar.Image source={{ uri: filial.empresa.logo }} size={80} />
-                                </Marker>
-                            )}
-                        </MapView>
-                        <Searchbar style={styles.floatingInput}
-                            placeholder="Digite a Categoria"
-                            onChangeText={(text: any) => {
-                                search(text)
-                            }}
-                            value={categoria}
-                        />
-                        {inputCard.length > 0 && categoria.length > 0 && inputCardActive == true && <Card style={styles.floatingInputCard}>
-                            <Card.Content>
-                                {inputCard.length > 0 && inputCard.map((filial: any, i: any) =>
-                                    <Text style={styles.floatInputText} onPress={(e) => {
-                                        handleCategoria(filial.nm_categoria)
-                                     }}>{filial.nm_categoria}</Text>
-                                )}
-                            </Card.Content>
-                        </Card>}
-                    </View>
-                }
-            </>
-        );
-    };
-
-    const ListaUserCupons = ({ route }: Route) => {
-        const [cupons, setCupons] = useState({} as any);
-        useEffect(() => {
-            getCupons()
-        }, []);
-
-        const getCupons = async () => {
-            await Cupons.userCupons().then((response: any) => {
-                setCupons(response);
-            })
-        }
-
-        const openMaps = (lat, lng) => {
-            var scheme = Platform.OS === 'ios' ? 'maps:' : 'geo:';
-            var url = scheme + `${lat},${lng}`;
-            Linking.openURL(url);
-            let f = Platform.select({
-                ios: () => {
-                    Linking.openURL('http://maps.apple.com/maps?daddr=' + scheme);
-                },
-                android: () => {
-                    Linking.openURL('http://maps.google.com/maps?daddr=' + scheme).catch(err => console.error('An error occurred', err));;
-                }
-            });
-        }
-
-        return (
-            <>
-                <Text style={styles.title}>Meus Cupons</Text>
-                {cupons.length > 0 && cupons.map((cupom: any, i: any) =>
-                    <Card style={styles.card} key={i}>
-                        <Card.Content style={styles.imageCupomCardContainer}>
-                            <View style={{ width: '20%' }}>
-                                <Avatar.Image source={{ uri: cupom.promocao.filial.empresa.logo }} size={60} />
-                            </View>
-                            <View style={{ width: '80%' }}>
-                                <Title>{cupom.promocao.nm_nome}</Title>
-                                <Paragraph><Text style={styles.cardText}>Estabelecimento:</Text> {cupom.promocao.filial.empresa.nm_nome}</Paragraph>
-                                <Paragraph><Text style={styles.cardText}>Código do Cupom:</Text> {cupom.cd_cupom}</Paragraph>
-                                <Paragraph><Text style={styles.cardText}>Utilizado?</Text> {(cupom.st_consumido == true) ? "Sim" : "Não"}</Paragraph>
-                                <Paragraph><Text style={styles.cardText}>Endereço</Text> {cupom.promocao.filial.ds_endereco}</Paragraph>
-                                <Button style={{ width: 140 }} icon="map" mode="text" onPress={() => openMaps(cupom.latitude, cupom.longitude)}>
-                                    Ver no Maps
-                                </Button>
-                            </View>
-                        </Card.Content>
-                    </Card>
-                )}
-            </>
-        )
-    };
-
-    const ListaEstabelecimentos = ({ route }: Route) => {
-        const [cupons, setCupons] = useState({} as any);
-        const [filiais, setFiliais] = useState([] as any);
-        const [location, setLocation] = useState(null);
-        const openMaps = (lat, lng) => {
-            var scheme = Platform.OS === 'ios' ? 'maps:' : 'geo:';
-            var url = scheme + `${lat},${lng}`;
-            Linking.openURL(url);
-            let f = Platform.select({
-                ios: () => {
-                    Linking.openURL('http://maps.apple.com/maps?daddr=' + scheme);
-                },
-                android: () => {
-                    console.log('ANDROID')
-                    Linking.openURL('http://maps.google.com/maps?daddr=' + scheme).catch(err => console.error('An error occurred', err));;
-                }
-            });
-        }
-        useEffect(() => {
-            (async () => {
-                let { status } = await Location.requestForegroundPermissionsAsync();
-                if (status !== 'granted') {
-                    alert('Permission to access location was denied');
-                    return;
-                }
-
-                let location = await Location.getCurrentPositionAsync({});
-                await setLocation({ latitude: location.coords.latitude, longitude: location.coords.longitude });
-                getFiliais({ latitude: location.coords.latitude, longitude: location.coords.longitude })
-            })();
-        }, []);
-
-
-        const getFiliais = async (geo) => {
-            await Filiais.getFiliais(geo).then((response: any) => {
-                setFiliais(response);
-            })
-        }
-
-        return (
-            <>
-                <Text style={styles.title}>Meus Cupons</Text>
-                {filiais.length > 0 && filiais.map((filial: any, i: any) =>
-                    <Card style={styles.card} key={i}>
-                        <Card.Content>
-                            <Title><Avatar.Image source={{ uri: filial.empresa.logo }} size={30} /> {filial.empresa.nm_nome}</Title>
-                            <Paragraph><Text style={styles.cardText}>Categoria:</Text> {filial.nm_categoria}</Paragraph>
-                            <Paragraph><Text style={styles.cardText}>Distância:</Text> {filial.km_away} Km</Paragraph>
-                            <Paragraph><Text style={styles.cardText}>Endereço:</Text> {filial.ds_endereco}</Paragraph>
-                            <Button style={{ width: 140 }} icon="map" mode="text" onPress={() => openMaps(filial.latitude, filial.longitude)}>
-                                Ver no Maps
-                            </Button>
-                        </Card.Content>
-                    </Card>
-                )}
-            </>
-        )
-    };
-
-    const Sorteio = ({ route }: Route) => {
         const [location, setLocation] = useState(null);
         const [errorMsg, setErrorMsg] = useState(null);
         const [filiais, setFiliais] = useState([] as any);
@@ -482,6 +237,7 @@ export default function ExampleList({ navigation, title }: Props) {
     };
 
 
+
     return (
         <>
 
@@ -490,9 +246,6 @@ export default function ExampleList({ navigation, title }: Props) {
                 onIndexChange={index => setIndex(index)}
                 renderScene={BottomNavigation.SceneMap({
                     sorteio: Sorteio,
-                    favorites: ListaUserCupons,
-                    mapa: Mapa,
-                    estabelecimentos: ListaEstabelecimentos
                 })}
                 sceneAnimationEnabled={false}
             />
@@ -556,33 +309,18 @@ const styles = StyleSheet.create({
     floatingInput: {
         alignSelf: 'center',
         position: 'absolute',
-        top: 2,
-        width: Dimensions.get('window').width,
-    },
-    floatingInputCard: {
-        alignSelf: 'center',
-        position: 'absolute',
-        top: 50,
-        width: Dimensions.get('window').width,
+        top: 35,
+        width: Dimensions.get('window').width - 50,
     },
     cardText: {
         fontWeight: 'bold'
     },
     card: {
-        marginTop: 20,
-        marginRight: 20,
-        marginLeft: 20,
+        margin: 20
     },
     title: {
         marginLeft: 20,
         marginTop: 20,
         fontSize: 20
-    },
-    imageCupomCardContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-    },
-    floatInputText: {
-        margin: 6,
     }
 });

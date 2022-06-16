@@ -12,6 +12,7 @@ import {
     Theme,
 } from 'react-native-paper';
 import App from './RootNavigator';
+import Sorteio from './sorteio/Sorteio';
 import Login from './auth/Login';
 import DrawerItems from './DrawerItems';
 import { SafeAreaProvider } from 'react-native-safe-area-context';

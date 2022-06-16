@@ -16,8 +16,11 @@ type Props = {
 };
 
 const DrawerItemsData = [
-    { label: 'Página Inicial', icon: 'inbox', key: 0, route: 'Home' },
-    { label: 'Sair da Conta', icon: 'logout', key: 3, route: 'Login' },
+    { label: 'Sorteio', icon: 'inbox', key: 0, route: 'Sorteio' },
+    { label: 'Meus Cupons', icon: 'inbox', key: 1, route: 'MyCupons' },
+    { label: 'Buscar', icon: 'inbox', key: 2, route: 'Buscar' },
+    { label: 'Ver Estabelecimentos', icon: 'inbox', key: 3, route: 'Estabelecimentos' },
+    { label: 'Sair da Conta', icon: 'logout', key: 4, route: 'Login' },
 ];
 
 
@@ -27,7 +30,16 @@ const DrawerItems = ({ toggleTheme, toggleRTL, isRTL, isDarkTheme, navigation }:
     const [drawerItemIndex, setDrawerItemIndex] = React.useState<number>(0);
     const _setDrawerItem = (index: number) => {
         setDrawerItemIndex(index);
-        navigation.navigate(DrawerItemsData[index].route);
+        if(DrawerItemsData[index].key <= 3){
+            navigation.navigate('Home', {
+                screen: 'Home',
+                params: {
+                  id: DrawerItemsData[index].key
+                },
+              });
+        }else{
+            navigation.navigate(DrawerItemsData[index].route);
+        }
     }
 
     const { colors } = useTheme();
