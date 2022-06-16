@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "fabionevs-tcc",
+    "name": "Zenyv Cupons",
     "slug": "snack-097551cd-f9c1-4199-ae58-09d99db20e51",
-    "version": "8.2.0",
+    "version": "9.2.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "scheme": "cupomapp",
@@ -25,7 +25,7 @@
         "foregroundImage": "./assets/logo-256.png",
         "backgroundColor": "#FFFFFF"
       },
-      "versionCode": 8,
+      "versionCode": 9,
       "package": "com.fabionevs.snack097551cdf9c14199ae5809d99db20e51",
       "config": {
         "googleMaps": {
