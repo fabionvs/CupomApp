@@ -3,7 +3,7 @@ import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const configValue: string = (process.env.REACT_APP_API_URL as string);
 const apiService = axios.create({
-    baseURL: "https://www.zenyv.com/api",
+    baseURL: "https://api.zenyv.com/api",
 });
 
 const getToken = async () => {
