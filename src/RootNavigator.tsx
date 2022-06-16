@@ -42,10 +42,9 @@ export default function Root(props:any) {
     return (
         <>
             <Stack.Navigator
-                headerMode="screen"
                 screenOptions={{
                     header: ({ navigation, scene, previous }) => (
-                        <Appbar.Header>
+                        <Appbar.Header style={{ marginTop: 0 }}>
                             {previous ? (
                                 <Appbar.BackAction onPress={() => navigation.goBack()} />
                             ) : (navigation as any).openDrawer ? (

@@ -11,7 +11,6 @@ const getFiliais = (location, categoria = null) => {
             params: data
         })
         .then((response) => {
-            console.log(response);
             return response.data;
         });
 };
@@ -22,7 +21,6 @@ const getCategorias = (categoria) => {
             params: {nm_categoria : categoria}
         })
         .then((response) => {
-            console.log(response);
             return response.data;
         });
 };

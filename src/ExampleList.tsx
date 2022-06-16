@@ -150,15 +150,16 @@ export default function ExampleList({ navigation, title }: Props) {
                             initialRegion={{
                                 latitude: location.latitude,
                                 longitude: location.longitude,
-                                latitudeDelta: 0.0922,
-                                longitudeDelta: 0.0421,
+                                latitudeDelta: 0.2,
+                                longitudeDelta: 0.2,
+
                             }}>
                             {filiais.length > 0 && filiais.map((filial: any, i: any) =>
                                 <Marker
                                     key={i}
                                     coordinate={{ latitude: Number(filial.latitude), longitude: Number(filial.longitude) }}
                                 >
-                                    <Avatar.Image source={{ uri: filial.empresa.logo }} size={80} />
+                                    <Avatar.Image source={{ uri: filial.empresa.logo }} size={50} />
                                 </Marker>
                             )}
                         </MapView>
@@ -171,11 +172,13 @@ export default function ExampleList({ navigation, title }: Props) {
                         />
                         {inputCard.length > 0 && categoria.length > 0 && inputCardActive == true && <Card style={styles.floatingInputCard}>
                             <Card.Content>
-                                {inputCard.length > 0 && inputCard.map((filial: any, i: any) =>
-                                    <Text style={styles.floatInputText} onPress={(e) => {
-                                        handleCategoria(filial.nm_categoria)
-                                     }}>{filial.nm_categoria}</Text>
-                                )}
+                                <ScrollView>
+                                    {inputCard.length > 0 && inputCard.map((filial: any, i: any) =>
+                                        <Text key={i} style={styles.floatInputText} onPress={(e) => {
+                                            handleCategoria(filial.nm_categoria)
+                                        }}>{filial.nm_categoria}</Text>
+                                    )}
+                                </ScrollView>
                             </Card.Content>
                         </Card>}
                     </View>
@@ -212,26 +215,28 @@ export default function ExampleList({ navigation, title }: Props) {
 
         return (
             <>
-                <Text style={styles.title}>Meus Cupons</Text>
-                {cupons.length > 0 && cupons.map((cupom: any, i: any) =>
-                    <Card style={styles.card} key={i}>
-                        <Card.Content style={styles.imageCupomCardContainer}>
-                            <View style={{ width: '20%' }}>
-                                <Avatar.Image source={{ uri: cupom.promocao.filial.empresa.logo }} size={60} />
-                            </View>
-                            <View style={{ width: '80%' }}>
-                                <Title>{cupom.promocao.nm_nome}</Title>
-                                <Paragraph><Text style={styles.cardText}>Estabelecimento:</Text> {cupom.promocao.filial.empresa.nm_nome}</Paragraph>
-                                <Paragraph><Text style={styles.cardText}>Código do Cupom:</Text> {cupom.cd_cupom}</Paragraph>
-                                <Paragraph><Text style={styles.cardText}>Utilizado?</Text> {(cupom.st_consumido == true) ? "Sim" : "Não"}</Paragraph>
-                                <Paragraph><Text style={styles.cardText}>Endereço</Text> {cupom.promocao.filial.ds_endereco}</Paragraph>
-                                <Button style={{ width: 140 }} icon="map" mode="text" onPress={() => openMaps(cupom.latitude, cupom.longitude)}>
-                                    Ver no Maps
-                                </Button>
-                            </View>
-                        </Card.Content>
-                    </Card>
-                )}
+                <ScrollView>
+                    <Text style={styles.title}>Meus Cupons</Text>
+                    {cupons.length > 0 && cupons.map((cupom: any, i: any) =>
+                        <Card style={styles.card} key={i}>
+                            <Card.Content style={styles.imageCupomCardContainer}>
+                                <View style={{ width: '20%' }}>
+                                    <Avatar.Image source={{ uri: cupom.promocao.filial.empresa.logo }} size={60} />
+                                </View>
+                                <View style={{ width: '80%' }}>
+                                    <Title>{cupom.promocao.nm_nome}</Title>
+                                    <Paragraph><Text style={styles.cardText}>Estabelecimento:</Text> {cupom.promocao.filial.empresa.nm_nome}</Paragraph>
+                                    <Paragraph><Text style={styles.cardText}>Código do Cupom:</Text> {cupom.cd_cupom}</Paragraph>
+                                    <Paragraph><Text style={styles.cardText}>Utilizado?</Text> {(cupom.st_consumido == true) ? "Sim" : "Não"}</Paragraph>
+                                    <Paragraph><Text style={styles.cardText}>Endereço</Text> {cupom.promocao.filial.ds_endereco}</Paragraph>
+                                    <Button style={{ width: 140 }} icon="map" mode="text" onPress={() => openMaps(cupom.latitude, cupom.longitude)}>
+                                        Ver no Maps
+                                    </Button>
+                                </View>
+                            </Card.Content>
+                        </Card>
+                    )}
+                </ScrollView>
             </>
         )
     };
@@ -249,7 +254,6 @@ export default function ExampleList({ navigation, title }: Props) {
                     Linking.openURL('http://maps.apple.com/maps?daddr=' + scheme);
                 },
                 android: () => {
-                    console.log('ANDROID')
                     Linking.openURL('http://maps.google.com/maps?daddr=' + scheme).catch(err => console.error('An error occurred', err));;
                 }
             });
@@ -277,20 +281,22 @@ export default function ExampleList({ navigation, title }: Props) {
 
         return (
             <>
-                <Text style={styles.title}>Meus Cupons</Text>
-                {filiais.length > 0 && filiais.map((filial: any, i: any) =>
-                    <Card style={styles.card} key={i}>
-                        <Card.Content>
-                            <Title><Avatar.Image source={{ uri: filial.empresa.logo }} size={30} /> {filial.empresa.nm_nome}</Title>
-                            <Paragraph><Text style={styles.cardText}>Categoria:</Text> {filial.nm_categoria}</Paragraph>
-                            <Paragraph><Text style={styles.cardText}>Distância:</Text> {filial.km_away} Km</Paragraph>
-                            <Paragraph><Text style={styles.cardText}>Endereço:</Text> {filial.ds_endereco}</Paragraph>
-                            <Button style={{ width: 140 }} icon="map" mode="text" onPress={() => openMaps(filial.latitude, filial.longitude)}>
-                                Ver no Maps
-                            </Button>
-                        </Card.Content>
-                    </Card>
-                )}
+                <ScrollView>
+                    <Text style={styles.title}>Lista de Estabelecimentos</Text>
+                    {filiais.length > 0 && filiais.map((filial: any, i: any) =>
+                        <Card style={styles.card} key={i}>
+                            <Card.Content>
+                                <Title><Avatar.Image source={{ uri: filial.empresa.logo }} size={30} /> {filial.empresa.nm_nome}</Title>
+                                <Paragraph><Text style={styles.cardText}>Categoria:</Text> {filial.nm_categoria}</Paragraph>
+                                <Paragraph><Text style={styles.cardText}>Distância:</Text> {filial.km_away} Km</Paragraph>
+                                <Paragraph><Text style={styles.cardText}>Endereço:</Text> {filial.ds_endereco}</Paragraph>
+                                <Button style={{ width: 140 }} icon="map" mode="text" onPress={() => openMaps(filial.latitude, filial.longitude)}>
+                                    Ver no Maps
+                                </Button>
+                            </Card.Content>
+                        </Card>
+                    )}
+                </ScrollView>
             </>
         )
     };
@@ -301,6 +307,7 @@ export default function ExampleList({ navigation, title }: Props) {
         const [filiais, setFiliais] = useState([] as any);
         const [cupons, setCupons] = useState([] as any);
         const [selectedLocation, setSelectedLocation] = useState({} as any);
+        const [selectedLocationIndex, setSelectedLocationIndex] = useState(-1);
         const [selectedBusiness, setSelectedBusiness] = useState({} as any);
         const [userBlocked, setUserBlocked] = useState(false);
         const [userSuccess, setUserSuccess] = useState(false);
@@ -332,8 +339,16 @@ export default function ExampleList({ navigation, title }: Props) {
         }
 
         const sorteio = async () => {
-            let newLocation = rand(0, filiais.length - 1);
+            let newLocation : number = selectedLocationIndex;
+            if(newLocation < filiais.length){
+                newLocation = newLocation + 1;
+            }
+            if(newLocation >= filiais.length){
+                newLocation = 0;
+            }
+            console.log(newLocation + " - "+ filiais.length)
             setSelectedLocation(filiais[newLocation])
+            setSelectedLocationIndex(newLocation)
             await setLocation({ latitude: Number(filiais[newLocation].latitude), longitude: Number(filiais[newLocation].longitude) });
         }
 
@@ -569,9 +584,10 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     card: {
-        marginTop: 20,
+        marginTop: 10,
         marginRight: 20,
         marginLeft: 20,
+        marginBottom: 10,
     },
     title: {
         marginLeft: 20,

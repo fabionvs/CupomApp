@@ -16,10 +16,10 @@ type Props = {
 };
 
 const DrawerItemsData = [
-    { label: 'Sorteio', icon: 'inbox', key: 0, route: 'Sorteio' },
+    { label: 'Sorteio', icon: 'tag-multiple-outline', key: 0, route: 'Sorteio' },
     { label: 'Meus Cupons', icon: 'inbox', key: 1, route: 'MyCupons' },
-    { label: 'Buscar', icon: 'inbox', key: 2, route: 'Buscar' },
-    { label: 'Ver Estabelecimentos', icon: 'inbox', key: 3, route: 'Estabelecimentos' },
+    { label: 'Buscar', icon: 'search-web', key: 2, route: 'Buscar' },
+    { label: 'Ver Estabelecimentos', icon: 'store', key: 3, route: 'Estabelecimentos' },
     { label: 'Sair da Conta', icon: 'logout', key: 4, route: 'Login' },
 ];
 
@@ -74,7 +74,6 @@ const DrawerItems = ({ toggleTheme, toggleRTL, isRTL, isDarkTheme, navigation }:
 const styles = StyleSheet.create({
     drawerContent: {
         flex: 1,
-        paddingTop: Platform.OS === 'android' ? 25 : 22,
     },
     preference: {
         flexDirection: 'row',

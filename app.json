@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "Zenyv Cupons",
+    "name": "Zenyv",
     "slug": "snack-097551cd-f9c1-4199-ae58-09d99db20e51",
-    "version": "10.2.0",
+    "version": "11.2.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo-256.png",
     "scheme": "cupomapp",
     "splash": {
-      "image": "./assets/icon.png",
+      "image": "./assets/logo-splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -25,7 +25,7 @@
         "foregroundImage": "./assets/logo-256.png",
         "backgroundColor": "#FFFFFF"
       },
-      "versionCode": 10,
+      "versionCode": 11,
       "package": "com.fabionevs.snack097551cdf9c14199ae5809d99db20e51",
       "config": {
         "googleMaps": {
@@ -34,8 +34,8 @@
       }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/logo-256.png"
     },
-    "description": "callstack/react-native-paper @ Nov 8, 2018"
+    "description": "Zenyv.com"
   }
 }

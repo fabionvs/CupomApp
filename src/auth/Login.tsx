@@ -39,7 +39,6 @@ export default function Login({ navigation }) {
         const hasToken = event.url.includes('token')
         if(hasToken){
             const url = event.url.split('token=')[1];
-            console.log(url)
             await Auth.storeUser(url);
             setTimeout(nav, 200);
         }
