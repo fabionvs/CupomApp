@@ -22,11 +22,11 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logo-256.png",
         "backgroundColor": "#FFFFFF"
       },
       "versionCode": 8,
-      "package": "com.fabionevs.snack097551cdf9c14199ae5809d99db20e51",
+      "package": "Zenyv Cupons",
       "config": {
           "googleMaps" :{
               "apiKey": "AIzaSyCn49u66dgO12HrOBOqD8uaag3nKbTJhsU"
